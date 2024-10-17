@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_EXTENSIONS: "xdebug"
+    container_name: laravel_app
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    networks:
+      - laravel
+    ports:
+      - "9000:9000"
+
+  webserver:
+    image: nginx:alpine
+    container_name: nginx_webserver
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - laravel
+    depends_on:
+      - app
+
+  db:
+    image: mysql:5.7
+    container_name: mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  mysql_data:
