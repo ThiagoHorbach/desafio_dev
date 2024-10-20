@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Models\Pagamento;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -19,12 +21,19 @@ class PaymentController extends Controller
         $paymentData = $this->criaRequisicaoPagamento("PIX");
         $paymentId = $paymentData['id']; 
 
-
-
         try {
             $qrCodeResponse = $this->obterQrCode($paymentId);
         
             if ($qrCodeResponse['success']) {
+
+                $pagamento = new Pagamento();
+                $pagamento->data_hora_transacao = Carbon::now();
+                $pagamento->forma_pagamento = 'PIX';
+                $pagamento->nome = 'teste comprador';
+                $pagamento->status = 'PENDING';
+                $pagamento->valor = '100.00';
+                $pagamento->save();
+
                 return view('payment.pix', [
                     'message' => 'Você escolheu o modo PIX',
                     'qrCode' => $qrCodeResponse['encodedImage'],
@@ -79,6 +88,15 @@ class PaymentController extends Controller
             $boletoResponse = $this->obterDadosBoleto($paymentId);
     
             if ($boletoResponse['barCode']) {
+
+                $pagamento = new Pagamento();
+                $pagamento->data_hora_transacao = Carbon::now();
+                $pagamento->forma_pagamento = 'BOLETO';
+                $pagamento->nome = 'teste comprador';
+                $pagamento->status = 'PENDING';
+                $pagamento->valor = '100.00';
+                $pagamento->save();
+
                 return view('payment.boleto', [
                     'message' => 'Você escolheu o modo BOLETO',
                     'identificationField' => $boletoResponse['identificationField'],
@@ -142,6 +160,15 @@ class PaymentController extends Controller
             return view('payment.cartao', ['error' => 'Falha na transação. ID da transação não retornado.']);
         }
 
+        $pagamento = new Pagamento();
+        $pagamento->data_hora_transacao = Carbon::now();
+        $pagamento->forma_pagamento = 'CARTÃO DE CRÉDITO';
+        $pagamento->nome = 'teste comprador';
+        $pagamento->status = $paymentData['status'];
+        $pagamento->valor = '100.00';
+        $pagamento->save();
+
+        $paymentData['installments'] = $request['installments'];
         return view('payment.cartao', ['paymentData' => $paymentData]);
     }
 
@@ -159,7 +186,7 @@ class PaymentController extends Controller
         $data = [
             "customer" => "6293132",
             "billingType" => $meio,
-            "dueDate" => "2024-10-18",
+            "dueDate" => Carbon::now()->format('Y-m-d'),
             "value" => 100,
             "description" => "Pedido 056984",
             "daysAfterDueDateToCancellationRegistration" => 1,
@@ -202,7 +229,7 @@ class PaymentController extends Controller
         $data = [
             "customer" => "6293132",
             "billingType" => $meio,
-            "dueDate" => "2024-10-18",
+            "dueDate" => Carbon::now()->format('Y-m-d'),
             "value" => $valor,
             "description" => "Pedido 056984",
             "daysAfterDueDateToCancellationRegistration" => 1,

@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\PaymentController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RelatorioController;
 
+
+use App\Http\Controllers\DatabaseController;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,4 +27,6 @@ Route::get('/pagamento/boleto', [PaymentController::class, 'boleto']);
 
 Route::post('/pagamento/cartao', [PaymentController::class, 'cartao'])->name('pagamento.cartao');
 
+Route::get('/check-database', [DatabaseController::class, 'checkConnection']);
 
+Route::get('/relatorio', [RelatorioController::class, 'mostraRelatorio']);
