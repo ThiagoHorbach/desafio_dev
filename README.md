@@ -97,12 +97,6 @@ Controle de versão com Git.
 
 * **Thiago Horbach** - *Desenvolvedor* - [LinkedIn](https://www.linkedin.com/in/thiagohorbach)
 
-
-
-
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
-
 ---
 ⌨️ com ❤️ por [Thiago Horbach](https://www.linkedin.com/in/thiagohorbach) 😊
 
